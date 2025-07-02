@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Record Management System</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Login Page -->
+    <div id="loginPage" class="container">
+      <div class="login-container">
+        <div class="logo">
+          <i class="fas fa-folder-open"></i>
+        </div>
+        <h1>Record Management System</h1>
+        <form class="login-form" id="loginForm">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+          </div>
+          <div class="form-group">
+            <label for="userType">Login as</label>
+            <select id="userType" name="userType" required>
+              <option value="">Select User Type</option>
+              <option value="user">User</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </div>
+          <button type="submit" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
+          <div id="loginError" class="error"></div>
+        </form>
+        <div
+          style="
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9rem;
+          "
+        >
+          <strong>Demo Credentials:</strong><br />
+          User: username: <code>user</code>, password: <code>user123</code
+          ><br />
+          Admin: username: <code>admin</code>, password: <code>admin123</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h2 id="userRole">User Dashboard</h2>
+          <p id="welcomeUser">Welcome, User!</p>
+        </div>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="#" onclick="showSection('overview')" class="active"
+              ><i class="fas fa-tachometer-alt"></i> Overview</a
+            >
+          </li>
+          <li>
+            <a href="#" onclick="showSection('records')"
+              ><i class="fas fa-file-alt"></i> Records</a
+            >
+          </li>
+          <li id="usersNavItem" class="hidden">
+            <a href="#" onclick="showSection('users')"
+              ><i class="fas fa-users"></i> Users</a
+            >
+          </li>
+          <li>
+            <a href="#" onclick="showSection('profile')"
+              ><i class="fas fa-user"></i> Profile</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <div class="main-content">
+        <div class="header">
+          <h1 id="pageTitle">Dashboard Overview</h1>
+          <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+
+        <!-- Overview Section -->
+        <div id="overviewSection" class="content-section active">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3 id="totalRecords">0</h3>
+              <p>Total Records</p>
+            </div>
+            <div class="stat-card">
+              <h3 id="myRecords">0</h3>
+              <p>My Records</p>
+            </div>
+            <div class="stat-card" id="userStatsCard" style="display: none">
+              <h3 id="totalUsers">0</h3>
+              <p>Total Users</p>
+            </div>
+            <div class="stat-card">
+              <h3 id="recentActivity">0</h3>
+              <p>Recent Activity</p>
+            </div>
+          </div>
+
+          <h3>Recent Records</h3>
+          <table class="records-table" id="recentRecordsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Created By</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- Records Section -->
+        <div id="recordsSection" class="content-section">
+          <div style="margin-bottom: 1rem">
+            <button
+              class="btn btn-primary"
+              onclick="openModal('addRecordModal')"
+            >
+              <i class="fas fa-plus"></i> Add Record
+            </button>
+          </div>
+          <table class="records-table" id="recordsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Created By</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- Users Section (Admin Only) -->
+        <div id="usersSection" class="content-section">
+          <div style="margin-bottom: 1rem">
+            <button class="btn btn-primary" onclick="openModal('addUserModal')">
+              <i class="fas fa-user-plus"></i> Add User
+            </button>
+          </div>
+          <table class="records-table" id="usersTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Last Login</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profileSection" class="content-section">
+          <h3>Profile Information</h3>
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="profileUsername">Username</label>
+              <input type="text" id="profileUsername" readonly />
+            </div>
+            <div class="form-group">
+              <label for="profileEmail">Email</label>
+              <input type="email" id="profileEmail" />
+            </div>
+            <div class="form-group">
+              <label for="profileRole">Role</label>
+              <input type="text" id="profileRole" readonly />
+            </div>
+            <button type="submit" class="btn btn-primary">
+              Update Profile
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Record Modal -->
+    <div id="addRecordModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('addRecordModal')"
+          >&times;</span
+        >
+        <h3>Add New Record</h3>
+        <form id="addRecordForm">
+          <div class="form-group">
+            <label for="recordTitle">Title</label>
+            <input type="text" id="recordTitle" required />
+          </div>
+          <div class="form-group">
+            <label for="recordCategory">Category</label>
+            <select id="recordCategory" required>
+              <option value="">Select Category</option>
+              <option value="Document">Document</option>
+              <option value="Report">Report</option>
+              <option value="Invoice">Invoice</option>
+              <option value="Contract">Contract</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="recordDescription">Description</label>
+            <textarea
+              id="recordDescription"
+              rows="3"
+              style="
+                width: 100%;
+                padding: 0.75rem;
+                border: 2px solid #e1e1e1;
+                border-radius: 8px;
+              "
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Add Record</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal" onclick="closeModal('addUserModal')"
+          >&times;</span
+        >
+        <h3>Add New User</h3>
+        <form id="addUserForm">
+          <div class="form-group">
+            <label for="newUsername">Username</label>
+            <input type="text" id="newUsername" required />
+          </div>
+          <div class="form-group">
+            <label for="newUserEmail">Email</label>
+            <input type="email" id="newUserEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="newUserRole">Role</label>
+            <select id="newUserRole" required>
+              <option value="">Select Role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="newUserPassword">Password</label>
+            <input type="password" id="newUserPassword" required />
+          </div>
+          <button type="submit" class="btn btn-success">Add User</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
